@@ -6,12 +6,17 @@ from jinja2 import Environment, FileSystemLoader
 
 
 def generate(
-    srcdir="./src", tpldir="./templates", distdir="./dist", cfgfile="./config.toml"
+    srcdir="./src",
+    tpldir="./templates",
+    distdir="./dist",
+    cfgfile="./config.toml",
+    globals={},
 ):
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = os.path.join(tmp, "dist")
         shutil.copytree(srcdir, tmpdir)
         env = Environment(loader=FileSystemLoader(tpldir, encoding="utf8"))
+        env.globals = globals
         with open(cfgfile) as f:
             config = toml.load(f)
         for item in config.values():
