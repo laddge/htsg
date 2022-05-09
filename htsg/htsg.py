@@ -6,7 +6,8 @@ import socketserver
 import functools
 import toml
 from jinja2 import Environment, FileSystemLoader
-import pyinotify
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 
 def generate(
@@ -49,20 +50,23 @@ def serve(
     cfgfile="./config.toml",
     globals={},
 ):
-    class ProcessEvent(pyinotify.ProcessEvent):
-        def process_default(self, event):
-            print("\033[1m Change detected: {}\033[m".format(event.maskname))
+    class EventHandler(FileSystemEventHandler):
+        def on_any_event(self, event):
+            print(
+                "\033[1m - Change detected: '{}' {}.\033[m".format(
+                    event.src_path, event.event_type
+                )
+            )
             generate(srcdir, tpldir, distdir, cfgfile, globals)
 
     generate(srcdir, tpldir, distdir, cfgfile, globals)
-    wm = pyinotify.WatchManager()
-    notifier = pyinotify.ThreadedNotifier(wm, ProcessEvent())
+    event_handler = EventHandler()
+    observer = Observer()
+    observer.schedule(event_handler, srcdir, recursive=True)
+    observer.schedule(event_handler, tpldir, recursive=True)
+    observer.schedule(event_handler, cfgfile)
     try:
-        notifier.start()
-        mask = pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_MODIFY
-        wm.add_watch(srcdir, mask)
-        wm.add_watch(tpldir, mask)
-        wm.add_watch(cfgfile, mask)
+        observer.start()
         handler = functools.partial(
             http.server.SimpleHTTPRequestHandler, directory=distdir
         )
@@ -79,4 +83,5 @@ def serve(
             httpd.serve_forever()
     except KeyboardInterrupt:
         print("\n\033[1m - Exiting.\033[m")
-        notifier.stop()
+        observer.stop()
+    observer.join()
