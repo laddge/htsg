@@ -7,7 +7,7 @@ from . import __version__
 def main():
     parser = argparse.ArgumentParser(
         prog="htsg",
-        description="htsg - Python3 site generator using Jinja2"
+        description="htsg - Another SSG"
     )
     parser.add_argument(
         "-s", "--serve",
