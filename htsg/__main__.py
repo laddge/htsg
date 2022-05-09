@@ -44,7 +44,9 @@ def generate():
     if args.version:
         print(f"htsg version {__version__}")
     else:
-        _generate(**vars(args))
+        params = vars(args)
+        params.pop("version")
+        _generate(**params)
 
 
 def serve():
@@ -98,7 +100,9 @@ def serve():
     if args.version:
         print(f"htsg version {__version__}")
     else:
-        _serve(**vars(args))
+        params = vars(args)
+        params.pop("version")
+        _serve(**params)
 
 
 if __name__ == "__main__":
