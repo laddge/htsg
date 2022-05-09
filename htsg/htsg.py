@@ -15,11 +15,23 @@ from watchdog.observers import Observer
 
 
 class _spinner:
+    """_spinner.
+    """
+
     def __init__(self, prefix):
+        """__init__.
+
+        Parameters
+        ----------
+        prefix :
+            prefix
+        """
         self.prefix = prefix
         self.done = False
 
     def _loop(self):
+        """_loop.
+        """
         spinners = ["/", "-", "\\", "|"]
         i = 0
         while True:
@@ -31,10 +43,14 @@ class _spinner:
             time.sleep(.2)
 
     def start(self):
+        """start.
+        """
         self.done = False
         threading.Thread(target=self._loop).start()
 
     def stop(self):
+        """stop.
+        """
         self.done = True
         print(f"\r{self.prefix} ... done.")
 
@@ -46,6 +62,21 @@ def generate(
     cfgfile="./config.toml",
     globals={},
 ):
+    """generate.
+
+    Parameters
+    ----------
+    srcdir :
+        srcdir
+    tpldir :
+        tpldir
+    distdir :
+        distdir
+    cfgfile :
+        cfgfile
+    globals :
+        globals
+    """
     print("---")
     print(f"srcdir  = '{srcdir}'")
     print(f"tpldir  = '{tpldir}'")
@@ -94,6 +125,25 @@ def serve(
     cfgfile="./config.toml",
     globals={},
 ):
+    """serve.
+
+    Parameters
+    ----------
+    host :
+        host
+    port :
+        port
+    srcdir :
+        srcdir
+    tpldir :
+        tpldir
+    distdir :
+        distdir
+    cfgfile :
+        cfgfile
+    globals :
+        globals
+    """
     print("---")
     print(f"srcdir  = '{srcdir}'")
     print(f"tpldir  = '{tpldir}'")
@@ -103,7 +153,17 @@ def serve(
     hashes = {}
 
     class EventHandler(FileSystemEventHandler):
+        """EventHandler.
+        """
+
         def on_any_event(self, event):
+            """on_any_event.
+
+            Parameters
+            ----------
+            event :
+                event
+            """
             if event.event_type == "closed":
                 return
             if event.event_type == "modified":
