@@ -4,6 +4,7 @@ import tempfile
 import http.server
 import socketserver
 import functools
+import hashlib
 import toml
 from jinja2 import Environment, FileSystemLoader
 from watchdog.events import FileSystemEventHandler
@@ -50,8 +51,27 @@ def serve(
     cfgfile="./config.toml",
     globals={},
 ):
+    hashes = {}
+
     class EventHandler(FileSystemEventHandler):
         def on_any_event(self, event):
+            if event.event_type == "closed":
+                return
+            if event.event_type == "modified":
+                if event.is_directory:
+                    return
+                if os.path.isfile(event.src_path):
+                    with open(event.src_path, "rb") as f:
+                        if (
+                            hashes.get(event.src_path)
+                            == hashlib.md5(f.read()).hexdigest()
+                        ):
+                            return
+            if os.path.isfile(event.src_path):
+                with open(event.src_path, "rb") as f:
+                    hashes[event.src_path] = hashlib.md5(f.read()).hexdigest()
+            else:
+                hashes.pop(event.src_path, None)
             print(
                 "\033[1m - Change detected: '{}' {}.\033[m".format(
                     event.src_path, event.event_type
