@@ -35,6 +35,12 @@ def main():
         help="configuration file (default: './config.toml')"
     )
     parser.add_argument(
+        "--cfgdict",
+        default={},
+        help="configuration dictionary (default: {})",
+        type=dict
+    )
+    parser.add_argument(
         "--globals",
         default={},
         help="global variables (default: {})",

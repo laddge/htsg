@@ -60,6 +60,7 @@ def generate(
     tpldir="./templates",
     distdir="./dist",
     cfgfile="./config.toml",
+    cfgdict={},
     globals={},
 ):
     """generate.
@@ -74,6 +75,8 @@ def generate(
         distdir
     cfgfile :
         cfgfile
+    cfgdict :
+        cfgdict
     globals :
         globals
     """
@@ -81,7 +84,6 @@ def generate(
     print(f"astdir  = '{astdir}'")
     print(f"tpldir  = '{tpldir}'")
     print(f"distdir = '{distdir}'")
-    print(f"cfgfile = '{cfgfile}'")
     print("---")
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = os.path.join(tmp, "dist")
@@ -91,10 +93,13 @@ def generate(
         sp.stop()
         sp = _spinner("Rendering")
         sp.start()
+        if cfgdict:
+            config = cfgdict
+        else:
+            with open(cfgfile) as f:
+                config = toml.load(f)
         env = Environment(loader=FileSystemLoader(tpldir, encoding="utf8"))
         env.globals = globals
-        with open(cfgfile) as f:
-            config = toml.load(f)
         for item in config.values():
             path = os.path.join(tmpdir, item["path"])
             tpl = env.get_template(item["template"])
@@ -123,6 +128,7 @@ def serve(
     tpldir="./templates",
     distdir="./dist",
     cfgfile="./config.toml",
+    cfgdict={},
     globals={},
 ):
     """serve.
@@ -141,6 +147,8 @@ def serve(
         distdir
     cfgfile :
         cfgfile
+    cfgdict :
+        cfgdict
     globals :
         globals
     """
@@ -148,7 +156,6 @@ def serve(
     print(f"astdir  = '{astdir}'")
     print(f"tpldir  = '{tpldir}'")
     print(f"distdir = '{distdir}'")
-    print(f"cfgfile = '{cfgfile}'")
     print("---")
     hashes = {}
 
@@ -187,7 +194,7 @@ def serve(
                 )
             )
             with redirect_stdout(open(os.devnull, "w")):
-                generate(astdir, tpldir, distdir, cfgfile, globals)
+                generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals)
 
     event_handler = EventHandler()
     observer = Observer()
@@ -210,7 +217,7 @@ def serve(
                 + "Do not use it in a production deployment.\033[m"
             )
             with redirect_stdout(open(os.devnull, "w")):
-                generate(astdir, tpldir, distdir, cfgfile, globals)
+                generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals)
             print("\033[1m - Generated.\033[m")
             httpd.serve_forever()
     except KeyboardInterrupt:
