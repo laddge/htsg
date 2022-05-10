@@ -15,9 +15,9 @@ def main():
         help="serve development server"
     )
     parser.add_argument(
-        "--srcdir",
-        default="./src",
-        help="source directory (default: './src')"
+        "--astdir",
+        default="./assets",
+        help="assets directory (default: './assets')"
     )
     parser.add_argument(
         "--tpldir",

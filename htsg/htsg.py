@@ -56,7 +56,7 @@ class _spinner:
 
 
 def generate(
-    srcdir="./src",
+    astdir="./assets",
     tpldir="./templates",
     distdir="./dist",
     cfgfile="./config.toml",
@@ -66,8 +66,8 @@ def generate(
 
     Parameters
     ----------
-    srcdir :
-        srcdir
+    astdir :
+        astdir
     tpldir :
         tpldir
     distdir :
@@ -78,16 +78,16 @@ def generate(
         globals
     """
     print("---")
-    print(f"srcdir  = '{srcdir}'")
+    print(f"astdir  = '{astdir}'")
     print(f"tpldir  = '{tpldir}'")
     print(f"distdir = '{distdir}'")
     print(f"cfgfile = '{cfgfile}'")
     print("---")
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = os.path.join(tmp, "dist")
-        sp = _spinner("Copying static files")
+        sp = _spinner("Copying assets")
         sp.start()
-        shutil.copytree(srcdir, tmpdir)
+        shutil.copytree(astdir, tmpdir)
         sp.stop()
         sp = _spinner("Rendering")
         sp.start()
@@ -119,7 +119,7 @@ def generate(
 def serve(
     host="0.0.0.0",
     port=8000,
-    srcdir="./src",
+    astdir="./assets",
     tpldir="./templates",
     distdir="./dist",
     cfgfile="./config.toml",
@@ -133,8 +133,8 @@ def serve(
         host
     port :
         port
-    srcdir :
-        srcdir
+    astdir :
+        astdir
     tpldir :
         tpldir
     distdir :
@@ -145,7 +145,7 @@ def serve(
         globals
     """
     print("---")
-    print(f"srcdir  = '{srcdir}'")
+    print(f"astdir  = '{astdir}'")
     print(f"tpldir  = '{tpldir}'")
     print(f"distdir = '{distdir}'")
     print(f"cfgfile = '{cfgfile}'")
@@ -187,11 +187,11 @@ def serve(
                 )
             )
             with redirect_stdout(open(os.devnull, "w")):
-                generate(srcdir, tpldir, distdir, cfgfile, globals)
+                generate(astdir, tpldir, distdir, cfgfile, globals)
 
     event_handler = EventHandler()
     observer = Observer()
-    observer.schedule(event_handler, srcdir, recursive=True)
+    observer.schedule(event_handler, astdir, recursive=True)
     observer.schedule(event_handler, tpldir, recursive=True)
     observer.schedule(event_handler, cfgfile)
     try:
@@ -210,7 +210,7 @@ def serve(
                 + "Do not use it in a production deployment.\033[m"
             )
             with redirect_stdout(open(os.devnull, "w")):
-                generate(srcdir, tpldir, distdir, cfgfile, globals)
+                generate(astdir, tpldir, distdir, cfgfile, globals)
             print("\033[1m - Generated.\033[m")
             httpd.serve_forever()
     except KeyboardInterrupt:
