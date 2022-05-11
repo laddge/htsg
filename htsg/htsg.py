@@ -7,7 +7,6 @@ import http.server
 import socketserver
 import functools
 import hashlib
-from contextlib import redirect_stdout
 import toml
 from jinja2 import Environment, FileSystemLoader
 from watchdog.events import FileSystemEventHandler
@@ -18,20 +17,25 @@ class _spinner:
     """_spinner.
     """
 
-    def __init__(self, prefix):
+    def __init__(self, prefix, quiet):
         """__init__.
 
         Parameters
         ----------
         prefix :
             prefix
+        quiet :
+            quiet
         """
         self.prefix = prefix
+        self.quiet = quiet
         self.done = False
 
     def _loop(self):
         """_loop.
         """
+        if self.quiet:
+            return
         spinners = ["/", "-", "\\", "|"]
         i = 0
         while True:
@@ -45,6 +49,8 @@ class _spinner:
     def start(self):
         """start.
         """
+        if self.quiet:
+            return
         self.done = False
         th = threading.Thread(target=self._loop)
         th.setDaemon(True)
@@ -53,6 +59,8 @@ class _spinner:
     def stop(self):
         """stop.
         """
+        if self.quiet:
+            return
         self.done = True
         print(f"\r{self.prefix} ... done.")
 
@@ -64,6 +72,7 @@ def generate(
     cfgfile="./config.toml",
     cfgdict={},
     globals={},
+    quiet=False,
 ):
     """generate.
 
@@ -81,19 +90,22 @@ def generate(
         cfgdict
     globals :
         globals
+    quiet :
+        quiet
     """
-    print("---")
-    print(f"astdir  = '{astdir}'")
-    print(f"tpldir  = '{tpldir}'")
-    print(f"distdir = '{distdir}'")
-    print("---")
+    if not quiet:
+        print("---")
+        print(f"astdir  = '{astdir}'")
+        print(f"tpldir  = '{tpldir}'")
+        print(f"distdir = '{distdir}'")
+        print("---")
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = os.path.join(tmp, "dist")
-        sp = _spinner("Copying assets")
+        sp = _spinner("Copying assets", quiet)
         sp.start()
         shutil.copytree(astdir, tmpdir)
         sp.stop()
-        sp = _spinner("Rendering")
+        sp = _spinner("Rendering", quiet)
         sp.start()
         if cfgdict:
             config = cfgdict
@@ -113,7 +125,7 @@ def generate(
             with open(path, "w") as f:
                 f.write(tpl.render(params))
         sp.stop()
-        sp = _spinner("Copying all files to distdir")
+        sp = _spinner("Copying all files to distdir", quiet)
         sp.start()
         if os.path.isfile(distdir):
             os.remove(distdir)
@@ -201,8 +213,7 @@ def serve(
                     event.src_path, event.event_type
                 )
             )
-            with redirect_stdout(open(os.devnull, "w")):
-                generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals)
+            generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
 
     event_handler = EventHandler()
     observer = Observer()
@@ -224,8 +235,7 @@ def serve(
                 "\033[31;1m - This is a development server. "
                 + "Do not use it in a production deployment.\033[m"
             )
-            with redirect_stdout(open(os.devnull, "w")):
-                generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals)
+            generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
             print("\033[1m - Generated.\033[m")
             httpd.serve_forever()
     except KeyboardInterrupt:
