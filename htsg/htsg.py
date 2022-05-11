@@ -115,13 +115,9 @@ def generate(
         for item in config.values():
             path = os.path.join(tmpdir, item["path"])
             tpl = env.get_template(item["template"])
-            if "params" in item:
-                params = item["params"]
-            else:
-                params = {}
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:
-                f.write(tpl.render(params))
+                f.write(tpl.render(item))
         sp.stop()
         sp = _spinner("Copying all files to distdir", quiet)
         sp.start()
