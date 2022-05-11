@@ -41,12 +41,6 @@ def main():
         type=dict
     )
     parser.add_argument(
-        "--globals",
-        default={},
-        help="global variables (default: {})",
-        type=dict
-    )
-    parser.add_argument(
         "--version",
         action='store_true',
         help="show version"

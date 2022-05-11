@@ -71,7 +71,6 @@ def generate(
     distdir="./dist",
     cfgfile="./config.toml",
     cfgdict={},
-    globals={},
     quiet=False,
 ):
     """generate.
@@ -88,8 +87,6 @@ def generate(
         cfgfile
     cfgdict :
         cfgdict
-    globals :
-        globals
     quiet :
         quiet
     """
@@ -113,7 +110,8 @@ def generate(
             with open(cfgfile) as f:
                 config = toml.load(f)
         env = Environment(loader=FileSystemLoader(tpldir, encoding="utf8"))
-        env.globals = globals
+        if "global" in config:
+            env.globals = config.pop("global")
         for item in config.values():
             path = os.path.join(tmpdir, item["path"])
             tpl = env.get_template(item["template"])
@@ -149,7 +147,6 @@ def serve(
     distdir="./dist",
     cfgfile="./config.toml",
     cfgdict={},
-    globals={},
 ):
     """serve.
 
@@ -169,8 +166,6 @@ def serve(
         cfgfile
     cfgdict :
         cfgdict
-    globals :
-        globals
     """
     print("---")
     print(f"astdir  = '{astdir}'")
@@ -215,12 +210,12 @@ def serve(
             )
             for _ in range(4):
                 try:
-                    generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
+                    generate(astdir, tpldir, distdir, cfgfile, cfgdict, True)
                 except Exception:
                     pass
                 else:
                     return
-            generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
+            generate(astdir, tpldir, distdir, cfgfile, cfgdict, True)
 
     event_handler = EventHandler()
     observer = Observer()
@@ -242,7 +237,7 @@ def serve(
                 "\033[31;1m - This is a development server. "
                 + "Do not use it in a production deployment.\033[m"
             )
-            generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
+            generate(astdir, tpldir, distdir, cfgfile, cfgdict, True)
             print("\033[1m - Generated.\033[m")
             httpd.serve_forever()
     except KeyboardInterrupt:
