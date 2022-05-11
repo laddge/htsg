@@ -123,6 +123,12 @@ def generate(
         sp.stop()
 
 
+class _req_handler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store")
+        http.server.SimpleHTTPRequestHandler.end_headers(self)
+
+
 def serve(
     host="0.0.0.0",
     port=8000,
@@ -206,7 +212,7 @@ def serve(
     try:
         observer.start()
         handler = functools.partial(
-            http.server.SimpleHTTPRequestHandler, directory=distdir
+            _req_handler, directory=distdir
         )
         with socketserver.TCPServer((host, port), handler) as httpd:
             httpd.allow_reuse_address = True
