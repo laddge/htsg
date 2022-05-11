@@ -213,6 +213,13 @@ def serve(
                     event.src_path, event.event_type
                 )
             )
+            for _ in range(4):
+                try:
+                    generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
+                except Exception:
+                    pass
+                else:
+                    return
             generate(astdir, tpldir, distdir, cfgfile, cfgdict, globals, True)
 
     event_handler = EventHandler()
