@@ -46,7 +46,9 @@ class _spinner:
         """start.
         """
         self.done = False
-        threading.Thread(target=self._loop).start()
+        th = threading.Thread(target=self._loop)
+        th.setDaemon(True)
+        th.start()
 
     def stop(self):
         """stop.
