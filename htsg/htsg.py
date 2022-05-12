@@ -113,12 +113,14 @@ def generate(
         env.globals = {"config": config}
         if "global" in config:
             env.globals.update(config.pop("global"))
-        for item in config.values():
-            path = os.path.join(tmpdir, item["path"])
-            tpl = env.get_template(item["template"])
+        for key, val in config.items():
+            params = {"key": key}
+            params.update(val)
+            path = os.path.join(tmpdir, params["path"])
+            tpl = env.get_template(params["template"])
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:
-                f.write(tpl.render(item))
+                f.write(tpl.render(params))
         sp.stop()
         sp = _spinner("Copying all files to distdir", quiet)
         sp.start()
