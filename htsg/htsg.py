@@ -110,8 +110,9 @@ def generate(
             with open(cfgfile) as f:
                 config = toml.load(f)
         env = Environment(loader=FileSystemLoader(tpldir, encoding="utf8"))
+        env.globals = {"config": config}
         if "global" in config:
-            env.globals = config.pop("global")
+            env.globals.update(config.pop("global"))
         for item in config.values():
             path = os.path.join(tmpdir, item["path"])
             tpl = env.get_template(item["template"])
