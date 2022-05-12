@@ -214,7 +214,10 @@ def serve(
                     pass
                 else:
                     return
-            generate(astdir, tpldir, distdir, cfgfile, cfgdict, True)
+            try:
+                generate(astdir, tpldir, distdir, cfgfile, cfgdict, True)
+            except Exception as e:
+                print(f"\033[31;1m - {e}\033[m")
 
     event_handler = EventHandler()
     observer = Observer()
