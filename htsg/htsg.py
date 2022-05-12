@@ -113,9 +113,7 @@ def generate(
         env.globals = {"config": config}
         if "global" in config:
             env.globals.update(config.pop("global"))
-        for key, val in config.items():
-            params = {"key": key}
-            params.update(val)
+        for params in config.values():
             path = os.path.join(tmpdir, params["path"])
             tpl = env.get_template(params["template"])
             os.makedirs(os.path.dirname(path), exist_ok=True)
