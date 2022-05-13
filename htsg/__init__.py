@@ -1,3 +1,3 @@
 from .htsg import *
 
-__version__ = "0.29.0"
+__version__ = "1.0.0"

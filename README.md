@@ -64,6 +64,10 @@ cfgfile = "./config.toml"
 htsg.serve(host, port, astdir, tpldir, distdir, cfgfile)
 ```
 
+## Release note
+### [v1.0.0](https://github.com/laddge/htsg/releases/tag/v1.0.0) (2022/05/13)
+Initial release
+
 ## License
 This project is under the MIT-License.  
 See also [LICENSE](LICENSE).
