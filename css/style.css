@@ -1,0 +1,53 @@
+* {
+    font-family: sans-serif;
+}
+
+.navbar {
+    background-color: #0099FF;
+    height: 2rem;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    font-weight: bolder;
+}
+
+.topblock {
+    display: inline-block;
+    height: 75vw;
+    max-height: 66vh;
+    width: 100%;
+    position: relative;
+    text-align: center;
+}
+
+.topblock > div {
+    width: 70%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 40%);
+    padding: 0 1rem;
+}
+
+.breadcrumbs {
+    padding: .5rem;
+}
+
+.centered {
+    width: -moz-fit-content;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+li {
+    padding-top: .2rem;
+}
