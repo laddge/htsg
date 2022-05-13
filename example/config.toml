@@ -1,0 +1,28 @@
+[global]
+baseURL = "/htsg/example/dist/"
+
+[top]
+path = "index.html"
+template = "top.html"
+title = "Example page - htsg"
+
+[articles]
+path = "article/index.html"
+template = "article_list.html"
+title = "Articles"
+
+[page001]
+path = "article/001.html"
+template = "article.html"
+title = "Article 001"
+parents = ["articles"]
+date = "22-4-19"
+contents = "contents/001.html"
+
+[page002]
+path = "article/002.html"
+template = "article.html"
+title = "Article 002"
+parents = ["articles"]
+date = "22-5-12"
+contents = "contents/002.html"

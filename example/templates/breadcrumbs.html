@@ -1,0 +1,9 @@
+<div class="breadcrumbs">
+    <a href="{{ baseURL }}">TOP</a>
+    {% for p in parents %}
+    <span style="padding-left: .5rem; padding-right: .5rem;">&gt;</span>
+    <a href="{{ baseURL }}{{ config[p].path }}">{{ config[p].title }}</a>
+    {% endfor %}
+    <span style="padding-left: .5rem; padding-right: .5rem;">&gt;</span>
+    {{ title }}
+</div>

@@ -1,0 +1,14 @@
+{% include "header.html" %}
+{% include "breadcrumbs.html" %}
+<ul class="centered">
+    {% for page in config.values() %}
+    {% if page.template == "article.html" %}
+    <li>
+        <a href="{{ baseURL }}{{ page.path }}">
+            {{ page.title }} ({{ page.date }})
+        </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% include "footer.html" %}
