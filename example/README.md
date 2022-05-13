@@ -32,4 +32,4 @@ This is an example of "htsg".
 `-- config.toml
 ```
 
-`./dist` directory is being served at [here](https://laddge.github.io/htsg/example/dist/).
+`./dist` directory is being served at [here](https://laddge.github.io/htsg/).
