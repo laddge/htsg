@@ -4,7 +4,6 @@ import threading
 import shutil
 import tempfile
 import http.server
-import socketserver
 import functools
 import hashlib
 import toml
@@ -227,7 +226,7 @@ def serve(
         handler = functools.partial(
             _req_handler, directory=distdir
         )
-        with socketserver.TCPServer((host, port), handler) as httpd:
+        with http.server.ThreadingHTTPServer((host, port), handler) as httpd:
             httpd.allow_reuse_address = True
             print(
                 "\033[1m - "
